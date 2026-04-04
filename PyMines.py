@@ -2,6 +2,8 @@ import pygame
 
 pygame.init()
 
+### Create Event ###
+
 grid = []
 width = 10
 height = 10
@@ -14,12 +16,18 @@ for lines in range(height):
 
 screen = pygame.display.set_mode((640, 640))
 block_img = pygame.image.load('spr-box.png').convert_alpha()
-#potato_img = pygame.transform.scale(potato_img, (potato_img.get_width() * 2, potato_img.get_height() * 2))
 
-potatoes = pygame.Surface((640, 640), pygame.SRCALPHA)
+draw_grid = pygame.Surface((640, 640), pygame.SRCALPHA)
+
+start_x = screen.get_width() / 2 - (((block_img.get_width() + 10) * width) / 2)
+start_y = screen.get_height() / 2 - (((block_img.get_height() + 10) * height + 10) / 2)
+
+spr_x = block_img.get_width()
+spr_y = block_img.get_height()
+
 for l in range(height):
     for r in range(width): 
-        potatoes.blit(block_img, (l * block_img.get_width() + 10, r * block_img.get_height() + 10))
+        draw_grid.blit(block_img, (start_x + (l * spr_x), start_y + (r * spr_y)))
 
 clock = pygame.time.Clock()
 running = True
@@ -27,11 +35,27 @@ running = True
 delta_time = 0
 x = 0
 
-print(grid)
+#print(grid)
+
+for l in range(height):
+        for r in range(width): 
+            print(((start_x + (l * spr_x)), (start_y + (r * spr_y))))
+
+### Step Event ###
 
 while (running):
     screen.fill((0, 65, 78))
-    screen.blit(potatoes, (screen.get_width() / 2 - potatoes.get_width() / 4, screen.get_height() / 2 - potatoes.get_height() / 4))
+    screen.blit(draw_grid, (0, 0))
+
+    mouse = pygame.mouse.get_pos()
+
+    for l in range(height):
+        for r in range(width): 
+            #print(((start_x + (l * spr_x)), (start_y + (r * spr_y))))
+            if mouse[0] > (start_x + (l * spr_x)) and mouse[0] < ((start_x + (l * spr_x)) + spr_x) and mouse[1] > (start_y + (r * spr_y)) and mouse[1] < ((start_y + (r * spr_y)) + spr_y):
+                print(mouse)
+            
+    
 
     '''
     screen.blit(potatoes, (x, 30))
