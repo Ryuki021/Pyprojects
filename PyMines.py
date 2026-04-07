@@ -4,6 +4,22 @@ pygame.init()
 
 ### Create Event ###
 
+screen = pygame.display.set_mode((640, 640))
+block_img = pygame.image.load('spr-box.png').convert_alpha()
+block_img_selected = pygame.image.load('spr-box-selected.png').convert_alpha()
+
+class Cell:
+    selected = False
+    bomb = False
+    image = block_img
+    image_selected = block_img_selected
+
+    def __init__(self, pos):
+        self.pos = pos
+    
+    def __str__(self):
+        return f"Selected: {self.selected} \nBombs: {self.bomb} \nSource Images: {self.image}, {self.image_selected} \nPosition: {self.pos}"
+
 grid = []
 width = 10
 height = 10
@@ -13,9 +29,6 @@ for lines in range(height):
     for rows in range(width):
         lines.append(0)
     grid.append(lines)
-
-screen = pygame.display.set_mode((640, 640))
-block_img = pygame.image.load('spr-box.png').convert_alpha()
 
 draw_grid = pygame.Surface((640, 640), pygame.SRCALPHA)
 
@@ -27,7 +40,8 @@ spr_y = block_img.get_height()
 
 for l in range(height):
     for r in range(width): 
-        draw_grid.blit(block_img, (start_x + (l * spr_x), start_y + (r * spr_y)))
+        grid[l][r] = Cell((l, r))
+        draw_grid.blit(grid[l][r].image, (start_x + (l * spr_x), start_y + (r * spr_y)))
 
 clock = pygame.time.Clock()
 running = True
@@ -35,11 +49,8 @@ running = True
 delta_time = 0
 x = 0
 
-#print(grid)
-
-for l in range(height):
-        for r in range(width): 
-            print(((start_x + (l * spr_x)), (start_y + (r * spr_y))))
+clicou = False
+selecionado = False
 
 ### Step Event ###
 
@@ -51,9 +62,17 @@ while (running):
 
     for l in range(height):
         for r in range(width): 
-            #print(((start_x + (l * spr_x)), (start_y + (r * spr_y))))
-            if mouse[0] > (start_x + (l * spr_x)) and mouse[0] < ((start_x + (l * spr_x)) + spr_x) and mouse[1] > (start_y + (r * spr_y)) and mouse[1] < ((start_y + (r * spr_y)) + spr_y):
-                print(mouse)
+            if mouse[0] > (start_x + (l * spr_x)) and mouse[0] < ((start_x + (l * spr_x)) + block_img.get_width()) and mouse[1] > (start_y + (r * spr_y)) and mouse[1] < ((start_y + (r * spr_y)) + block_img.get_height()):
+                draw_grid.blit(grid[l][r].image_selected, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
+                
+                if pygame.mouse.get_pressed()[0] == True and clicou == False: 
+                    clicou = True
+                    grid[l][r].selected = not grid[l][r].selected
+                    print(grid[l][r])
+                elif pygame.mouse.get_pressed()[0] == False:
+                    clicou = False
+            else:
+                draw_grid.blit(block_img, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
             
     
 
