@@ -5,9 +5,17 @@ pygame.init()
 
 ### Create Event ###
 
+delta_time = 0
+time = 1
+actual_time = 0
+current_time = 0
+can_time = False
+
 screen = pygame.display.set_mode((640, 640))
 block_img = pygame.image.load('spr-box.png').convert_alpha()
 block_img_selected = pygame.image.load('spr-box-selected.png').convert_alpha()
+
+#Classes and Defs
 
 class Cell:
     selected = False
@@ -20,6 +28,8 @@ class Cell:
     
     def __str__(self):
         return f"Selected: {self.selected} \nBombs: {self.bomb} \nSource Images: {self.image}, {self.image_selected} \nPosition: {self.pos}"
+
+#Initialization
 
 grid = []
 width = 10
@@ -39,7 +49,8 @@ start_y = screen.get_height() / 2 - (((block_img.get_height() + 10) * height + 1
 spr_x = block_img.get_width()
 spr_y = block_img.get_height()
 
-ra = (random.randrange(0, 10, 1), random.randrange(0, 10, 1))
+#ra = (random.randrange(0, 10, 1), random.randrange(0, 10, 1))
+ra = (0, 0)
 
 for l in range(height):
     for r in range(width): 
@@ -50,9 +61,6 @@ for l in range(height):
 
 clock = pygame.time.Clock()
 running = True
-
-delta_time = 0
-x = 0
 
 clicou = False
 selecionado = False
@@ -74,8 +82,11 @@ while (running):
                 #print(l, r)
                 
                 if pygame.mouse.get_pressed()[0] == True and clicou == False: 
-                    if grid[l][r].bomb == True:
-                        running = False
+                    if grid[l][r].bomb == True: 
+                        if can_time == False:
+                            time = 2000
+                            actual_time = pygame.time.get_ticks()
+                            can_time = True
                     clicou = True
                     grid[l][r].selected = not grid[l][r].selected
                     print(grid[l][r])
@@ -83,22 +94,18 @@ while (running):
                     clicou = False
             else:
                 draw_grid.blit(block_img, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
-            
-    
-
-    '''
-    screen.blit(potatoes, (x, 30))
-    x += 10 * delta_time
-    '''
-
+    if can_time == True:
+        current_time = pygame.time.get_ticks()
+        #print(current_time - actual_time)
+        #print(time
+    if current_time - actual_time >= time:
+        running = False
     for event in pygame.event.get():
         #print(event)
 
         if event.type != pygame.QUIT: continue
         running = False
-    
     pygame.display.flip()
 
     delta_time = clock.tick(60) / 1000
-
 pygame.quit()
