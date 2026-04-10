@@ -49,8 +49,8 @@ start_y = screen.get_height() / 2 - (((block_img.get_height() + 10) * height + 1
 spr_x = block_img.get_width()
 spr_y = block_img.get_height()
 
-#ra = (random.randrange(0, 10, 1), random.randrange(0, 10, 1))
-ra = (0, 0)
+ra = (random.randrange(0, 10, 1), random.randrange(0, 10, 1))
+#ra = (0, 0)
 
 for l in range(height):
     for r in range(width): 
@@ -77,22 +77,28 @@ while (running):
 
     for l in range(height):
         for r in range(width): 
-            if mouse[0] > (start_x + (l * spr_x)) and mouse[0] < ((start_x + (l * spr_x)) + block_img.get_width()) and mouse[1] > (start_y + (r * spr_y)) and mouse[1] < ((start_y + (r * spr_y)) + block_img.get_height()):
-                draw_grid.blit(grid[l][r].image_selected, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
+            hover = mouse[0] > (start_x + (l * spr_x)) and mouse[0] < ((start_x + (l * spr_x)) + block_img.get_width()) and mouse[1] > (start_y + (r * spr_y)) and mouse[1] < ((start_y + (r * spr_y)) + block_img.get_height())
+            cell = grid[l][r]
+            if hover:
+                cell.selected = True
                 #print(l, r)
                 
                 if pygame.mouse.get_pressed()[0] == True and clicou == False: 
-                    if grid[l][r].bomb == True: 
+                    if cell.bomb == True: 
                         if can_time == False:
                             time = 2000
                             actual_time = pygame.time.get_ticks()
                             can_time = True
                     clicou = True
-                    grid[l][r].selected = not grid[l][r].selected
-                    print(grid[l][r])
+                    cell.selected = not cell.selected
+                    #print(grid[l][r])
                 elif pygame.mouse.get_pressed()[0] == False:
                     clicou = False
             else:
+                cell.selected = False
+            if cell.selected == True:
+                draw_grid.blit(cell.image_selected, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
+            elif cell.selected == False:
                 draw_grid.blit(block_img, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
     if can_time == True:
         current_time = pygame.time.get_ticks()
