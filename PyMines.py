@@ -102,11 +102,17 @@ while (running):
         for r in range(width): 
             hover = mouse[0] > (start_x + (l * spr_x)) and mouse[0] < ((start_x + (l * spr_x)) + block_img.get_width()) and mouse[1] > (start_y + (r * spr_y)) and mouse[1] < ((start_y + (r * spr_y)) + block_img.get_height())
             cell = grid[l][r]
-            if hover:
+            
+            if not hover:
+                cell.hovered = False
+            else:
                 cell.hovered = True
                 #print(l, r)
+
+                if pygame.mouse.get_pressed()[0] == False:
+                    clicou = False
                 
-                if pygame.mouse.get_pressed()[0] == True and clicou == False: 
+                elif pygame.mouse.get_pressed()[0] == True and clicou == False: 
                     if cell.bomb == True: 
                         if can_time == False:
                             time = 2000
@@ -117,37 +123,33 @@ while (running):
                     cell.selected = True
                     print(grid[l][r])
 
-                elif pygame.mouse.get_pressed()[0] == False:
-                    clicou = False
-            else:
-                cell.hovered = False
+            
             if cell.hovered == True:
                 for a in range(dir):
                     xx = cell.x + around[a][0]
                     yy = cell.y + around[a][1]
-                    if xx >= 0 and xx <= 9 and yy >= 0 and yy <= 9:
-                        if not grid[xx][yy].bomb == True:
-                            continue
-                        print(grid[xx][yy])
-                        #cell.set_alpha_on()
-                        grid[xx][yy].searched = True
-                        draw_grid.blit(cell.image_selected, ((start_x + (xx * spr_x)), start_y + (yy * spr_y)))
+                    if not (xx >= 0 and xx <= 9 and yy >= 0 and yy <= 9):
+                        continue
+                    if not grid[xx][yy].bomb == True:
+                        continue
+                    print(grid[xx][yy])
+                    #cell.set_alpha_on()
+                    grid[xx][yy].searched = True
+                    draw_grid.blit(cell.image_selected, ((start_x + (xx * spr_x)), start_y + (yy * spr_y)))
                 cell.set_alpha_on()
-                #draw_grid.blit(cell.image_selected, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
+            
             elif cell.hovered == False:
                 if cell.searched == False:
-                    draw_grid.blit(block_img, ((start_x + (l * spr_x)), start_y + (r * spr_y)))
+                    draw_grid.blit(block_img, ((start_x + (l * spr_x)), start_y + (r * spr_y)))    
             cell.searched = False
     
     if can_time == True:
         current_time = pygame.time.get_ticks()
-        #print(current_time - actual_time)
-        #print(time
+
     if current_time - actual_time >= time:
         running = False
-    for event in pygame.event.get():
-        #print(event)
 
+    for event in pygame.event.get():
         if event.type != pygame.QUIT: continue
         running = False
     pygame.display.flip()
